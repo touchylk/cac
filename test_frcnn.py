@@ -35,7 +35,7 @@ config_output_filename = options.config_filename
 
 with open(config_output_filename, 'rb') as f_in:
 	C = pickle.load(f_in)
-C.network = 'vgg'
+C.network = 'resnet50'
 if C.network == 'resnet50':
 	import keras_frcnn.resnet as nn
 elif C.network == 'vgg':
@@ -130,7 +130,8 @@ classifier = nn.classifier(feature_map_input, roi_input, C.num_rois, nb_classes=
 holy_classer = nn.fine_layer(feature_map_input,roi_input,trainable=True)
 
 model_rpn = Model(img_input, rpn_layers)
-model_classifier_only = Model([feature_map_input, roi_input], classifier)
+model_classifier_only = Model([feature_map_input, roi_input], classifier[:2])
+model_test = Model([feature_map_input, roi_input], classifier)
 
 model_classifier = Model([feature_map_input, roi_input], classifier)
 model_holyclassifier = Model([feature_map_input,roi_input],holy_classer)
@@ -142,7 +143,7 @@ print('Loading weights from {}'.format(C.model_path))
 model_rpn.compile(optimizer='sgd', loss='mse')
 model_classifier.compile(optimizer='sgd', loss='mse')
 model_holyclassifier.compile(optimizer='sgd', loss='mse')
-
+model_test.compile(optimizer='sgd', loss='mse')
 
 all_imgs = []
 
@@ -196,7 +197,10 @@ for idx, img_name in enumerate(sorted(os.listdir(img_path))):
 			ROIs = ROIs_padded
 
 		[P_cls, P_regr] = model_classifier_only.predict([F, ROIs])
-		plist = model_holyclassifier.predict([F,ROIs])
+		#plist = model_holyclassifier.predict([F,ROIs])
+		aa,bb,cc = model_test([F, ROIs])
+		print(cc.shape)
+		exit(6)
 		print(plist[0].shape)
 
 		for ii in range(P_cls.shape[1]):

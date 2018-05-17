@@ -233,7 +233,7 @@ model_birdclassifier  =Model([img_input,head_roi,legs_roi,wings_roi,back_roi,bel
 
 
 model_rpn = Model(img_input, rpn[:2])
-model_classifier = Model([img_input, roi_input], classifier)
+model_classifier = Model([img_input, roi_input], classifier[:2])
 #model_birdclassifier = Model([img_input, bird_rois_input0,bird_rois_input1,bird_rois_input2,bird_rois_input3,bird_rois_input4,bird_rois_input5,bird_rois_input6], bird_classifier_output)
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_birdclassifier = Model([img_input,roi_input],bird_)
