@@ -53,7 +53,7 @@ else:
 #cfg.base_net_weights = cfg.ori_res50_withtop
 
 all_imgs, classes_count, bird_class_count = get_data(cfg.train_path,part_class_mapping)
-data_lei = march.get_voc_label(all_imgs, classes_count, part_class_mapping, bird_class_count, bird_class_mapping,config= cfg,trainable=True)
+data_lei = march.get_voc_label(all_imgs, classes_count, part_class_mapping, bird_class_count, bird_class_mapping,config= cfg,trainable=False)
 #pprint.pprint(classes_count)
 #pprint.pprint(part_class_mapping)
 # 这里的类在match里边定义
@@ -106,7 +106,7 @@ class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,
 
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
-cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(8)
+cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(16)
 try:
     print('loading weights from {}'.format(cfg.base_net_weights))
     #model_rpn.load_weights(cfg.base_net_weights, by_name=True)
@@ -130,6 +130,7 @@ step= 0
 now_epoch = 0
 tru_s=np.zeros([7],dtype=np.int16)
 fal_s=np.zeros([7],dtype=np.int16)
+holy_pre_result = []
 while 1:
     step+=1
     img_np,boxnp, labellist,img_path = data_lei.next_batch(1)
@@ -150,6 +151,8 @@ while 1:
         label = labellist[i][0,1:]
         pre_idx = np.argmax(net_predict)
         lab_idx = np.argmax(label)
+        one_sample = {'pre':net_predict,'label':labellist}
+        holy_pre_result.append(one_sample)
         if pre_idx ==lab_idx:
             tru_s[i]+=1
         else:
@@ -170,7 +173,7 @@ while 1:
     #print(holynet_loss)
     #exit()
     #print(boxnp)
-    print('step is {} batch_index is {} and epoch is {}'.format(step,data_lei.batch_index,data_lei.epoch))
+    #print('step is {} batch_index is {} and epoch is {}'.format(step,data_lei.batch_index,data_lei.epoch))
     #print(holynet_loss)
     if data_lei.epoch!= now_epoch:
         arc = np.zeros([7],dtype=np.float32)
@@ -181,3 +184,6 @@ while 1:
     if data_lei.epoch == 10:
         print('train done! 呵呵')
         break
+result_class_path = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part_result{}.hdf5'.format(16)
+with open(result_class_path,'wb') as f:
+    pickle.dump(holy_pre_result,f)
