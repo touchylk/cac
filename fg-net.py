@@ -107,7 +107,7 @@ class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
 
-start_epoch = 8
+start_epoch = 18
 
 cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(start_epoch)
 try:
@@ -128,7 +128,7 @@ for i in range(7):
 model_holyclassifier.compile(optimizer=optimizer,loss=lossfn_list)
 #model_classifier_holyimg.compile(optimizer=optimizer,loss=lossfn_list)
 
-max_epoch=32
+max_epoch=48
 step= 0
 now_epoch = start_epoch
 data_lei.epoch = start_epoch
@@ -166,7 +166,7 @@ while 1:
     print(holynet_loss)
     #print(holynet_loss)
     if data_lei.epoch!= now_epoch:
-        if data_lei.epoch%4 ==0:
+        if data_lei.epoch%2 ==0:
             model_holyclassifier.save_weights(cfg.holy_img_weight_path+'model_part'+str(data_lei.epoch)+'.hdf5')
         now_epoch = data_lei.epoch
     if data_lei.epoch == max_epoch:

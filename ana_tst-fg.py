@@ -153,12 +153,7 @@ while 1:
     #exit(4)
     #holynet_loss = model_holyclassifier.train_on_batch([img_np,boxnp],labellist)
     netoutput = model_holyclassifier.predict_on_batch([img_np,boxnp])
-    img = cv2.imread(img_path)
-    img_ori = cv2.imread(img_path)
-    size_w_ori = img_ori.shape[1]
-    size_h_ori = img_ori.shape[0]
-    size_w_map = get_output_length(img_np.shape[2])
-    size_h_map = get_output_length(img_np.shape[1])
+
     for i in range(7):
         net_predict = netoutput[i][0,:]
         label = labellist[i][0,1:]
@@ -166,38 +161,11 @@ while 1:
         lab_idx = np.argmax(label)
         one_sample = {'pre':net_predict,'label':labellist}
         holy_pre_result.append(one_sample)
-        if pre_idx ==lab_idx:
-            tru_s[i]+=1
-        else:
-            fal_s[i]+=1
-        for key, value in part_class_mapping.items():
-            if value == i:
-                pname = key
         if labellist[i][0, 0] == 1:
-            baohan ='yes'
-        else:
-            baohan = 'no'
-        print('part:{}  predict idx:{}  lab_idx:{} C :{} {}'.format(pname,pre_idx,lab_idx,net_predict[pre_idx],baohan))
-        x1_out = boxnp[0, i, 0]
-        y1_out = boxnp[0, i, 1]
-        w_out = boxnp[0, i, 2]
-        h_out = boxnp[0, i, 3]
-        w = w_out * (size_w_ori / size_w_map)
-        h = h_out * (size_h_ori / size_h_map)
-        x1 = x1_out * (size_w_ori / size_w_map)
-        y1 = y1_out * (size_h_ori / size_h_map)
-        if labellist[i][0, 0] == 1:
-            for key, value in part_class_mapping.items():
-                if value == i:
-                    pname = key
-            # print('{}  {}  {}'.format(key, pre_idx, lab_idx))
-            cv2.rectangle(img_ori, (int(x1), int(y1)), (int(x1 + w), int(y1 + w)), (0, 255, 0), 2)
-            # cv2.rectangle(img_ori, (int(x1), int(y1) - 20),
-            #            (int(x1 + w), int(y1)), (125, 125, 125), -1)
-            cv2.putText(img_ori, '{} p:{} l:{} C:{}'.format(pname, pre_idx, lab_idx, net_predict[pre_idx]),
-                        (int(x1) + 5, int(y1) - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        (0, 0, 0), 1, cv2.LINE_AA)
-    print('\n')
+            if pre_idx ==lab_idx:
+                tru_s[i]+=1
+            else:
+                fal_s[i]+=1
     '''for j in range(boxnp.shape[1]):
         x1_out = boxnp[0, j, 0]
         y1_out = boxnp[0, j, 1]
@@ -226,8 +194,6 @@ while 1:
     #img_np = cv2.imread(img_path)
     # print(annot)
     # cv2.imshow('ori_label', img_np)
-    cv2.imshow('net_label', img_ori)
-    cv2.waitKey(0)
     #predict = model_holyclassifier.predict([img_np,boxnp])
     #predict =np.mean(predict,axis=1)
     #print(predict[0])
@@ -249,6 +215,7 @@ while 1:
 
     #break
     if data_lei.epoch!= now_epoch:
+        #break
         arc = np.zeros([7],dtype=np.float32)
         for j in range(7):
             arc[j]= float(tru_s[j])/float(tru_s[j]+fal_s[j])

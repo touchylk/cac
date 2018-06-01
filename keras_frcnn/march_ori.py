@@ -26,7 +26,7 @@ class get_voc_label(object):
         self.max_batch = len(all_imgs)
         self.batch_index = 0
         self.epoch = 0
-        self.part_num =  len(classes_count)
+        self.part_num =  7#len(classes_count)
         self.bird_class_num = len(bird_classes_count)
         self.net_size = [38,56]
         self.C =config
