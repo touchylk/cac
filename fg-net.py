@@ -103,13 +103,12 @@ shared_layers = nn.nn_base(img_input, trainable=True)  # 共享网络层的输�
 holyclass_out = nn.fine_layer(shared_layers, part_roi_input,nb_classes=200)
 
 class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,nb_classes=200)
-
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
 
-start_epoch = 18
+start_epoch = 0
 
-cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(start_epoch)
+cfg.base_net_weights = cfg.ori_res50_withtop#'/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(start_epoch)
 try:
     print('loading weights from {}'.format(cfg.base_net_weights))
     #model_rpn.load_weights(cfg.base_net_weights, by_name=True)
@@ -167,7 +166,7 @@ while 1:
     #print(holynet_loss)
     if data_lei.epoch!= now_epoch:
         if data_lei.epoch%2 ==0:
-            model_holyclassifier.save_weights(cfg.holy_img_weight_path+'model_part'+str(data_lei.epoch)+'.hdf5')
+            model_holyclassifier.save_weights(cfg.holy_img_weight_path+'part_headonly'+str(data_lei.epoch)+'.hdf5')
         now_epoch = data_lei.epoch
     if data_lei.epoch == max_epoch:
         print('train done! 呵呵')

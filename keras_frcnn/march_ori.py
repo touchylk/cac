@@ -82,6 +82,8 @@ class get_voc_label(object):
     def next_batch(self,batech_size):
         img_input_np= np.zeros([batech_size,self.input_img_size_heigth,self.input_img_size_witdth,3])
         netout_width, netout_height = self.get_outputsize(width=self.input_img_size_witdth, height=self.input_img_size_heigth)
+        netout_height =149
+        netout_width =149
         part_roi_input = np.zeros([batech_size,self.part_num,4],dtype=np.int16)
         labellist =[]
         for nn in range(self.part_num):
@@ -117,6 +119,8 @@ class get_voc_label(object):
             for bbox in img['bboxes']:
                 nnn+=1
                 part_index = self.class_mapping[bbox['class']]
+                if part_index != 0:
+                    continue
                 if str(part_index) not in check_dict:
                     check_dict[str(part_index)] = part_index
                 else:

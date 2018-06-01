@@ -115,6 +115,7 @@ class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
 cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(18)
+cfg.base_net_weights = cfg.holy_img_weight_path+'part_headonly'+str(8)+'.hdf5'
 try:
     print('loading weights from {}'.format(cfg.base_net_weights))
     #model_rpn.load_weights(cfg.base_net_weights, by_name=True)
@@ -153,14 +154,14 @@ while 1:
     #exit(4)
     #holynet_loss = model_holyclassifier.train_on_batch([img_np,boxnp],labellist)
     netoutput = model_holyclassifier.predict_on_batch([img_np,boxnp])
-
+    one_sample = {'netout':netoutput,'label':labellist}
+    holy_pre_result.append(one_sample)
     for i in range(7):
         net_predict = netoutput[i][0,:]
         label = labellist[i][0,1:]
         pre_idx = np.argmax(net_predict)
         lab_idx = np.argmax(label)
-        one_sample = {'pre':net_predict,'label':labellist}
-        holy_pre_result.append(one_sample)
+        #one_sample = {'pre':net_predict,'label':labellist}
         if labellist[i][0, 0] == 1:
             if pre_idx ==lab_idx:
                 tru_s[i]+=1
@@ -217,11 +218,11 @@ while 1:
     if data_lei.epoch!= now_epoch:
         #break
         arc = np.zeros([7],dtype=np.float32)
-        for j in range(7):
+        for j in range(1):
             arc[j]= float(tru_s[j])/float(tru_s[j]+fal_s[j])
         print(arc)
         break
-result_class_path = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part_result{}.hdf5'.format(18)
+result_class_path = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part_result_test{}.hdf5'.format(8)
 with open(result_class_path,'wb') as f:
     pickle.dump(holy_pre_result,f)
 
