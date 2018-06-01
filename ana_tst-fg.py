@@ -61,7 +61,7 @@ else:
 #cfg.base_net_weights = cfg.ori_res50_withtop
 
 all_imgs, classes_count, bird_class_count = get_data(cfg.train_path,part_class_mapping)
-data_lei = march.get_voc_label(all_imgs, classes_count, part_class_mapping, bird_class_count, bird_class_mapping,config= cfg,trainable=False)
+data_lei = march.get_voc_label(all_imgs, classes_count, part_class_mapping, bird_class_count, bird_class_mapping,config= cfg,trainable=True)
 #pprint.pprint(classes_count)
 #pprint.pprint(part_class_mapping)
 # 这里的类在match里边定义
@@ -115,7 +115,7 @@ class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
 cfg.base_net_weights = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(18)
-cfg.base_net_weights = cfg.holy_img_weight_path+'part_headonly'+str(8)+'.hdf5'
+#cfg.base_net_weights = cfg.holy_img_weight_path+'part_headonly'+str(8)+'.hdf5'
 try:
     print('loading weights from {}'.format(cfg.base_net_weights))
     #model_rpn.load_weights(cfg.base_net_weights, by_name=True)
@@ -218,11 +218,11 @@ while 1:
     if data_lei.epoch!= now_epoch:
         #break
         arc = np.zeros([7],dtype=np.float32)
-        for j in range(1):
+        for j in range(7):
             arc[j]= float(tru_s[j])/float(tru_s[j]+fal_s[j])
         print(arc)
         break
-result_class_path = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part_result_test{}.hdf5'.format(8)
+result_class_path = '/media/e813/D/weights/kerash5/frcnn/TST_holy_img/part_result_train{}.pkl'.format(18)
 with open(result_class_path,'wb') as f:
     pickle.dump(holy_pre_result,f)
 

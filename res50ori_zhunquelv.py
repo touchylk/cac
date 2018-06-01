@@ -126,15 +126,19 @@ for i in range(7):
     lossfn_list.append(losses.holy_loss())
 #model_holyclassifier.compile(optimizer=optimizer,loss=lossfn_list)
 #model_classifier_holyimg.compile(optimizer=optimizer,loss='categorical_crossentropy')
-model_res50ori.compile(optimizer=optimizer,loss='categorical_crossentropy')
+model_res50ori.compile(optimizer=optimizer,loss='categorical_crossentropy',metrics='')
 
 max_epoch=10
 step= 0
 now_epoch = epoch_start
 data_lei.epoch = epoch_start
+batch_size = 20
+tru_s =0
+fal_s = 0
+
 while data_lei.epoch<=max_epoch:
     step+=1
-    img_np,boxnp, label,img_path = data_lei.next_batch(20)
+    img_np,boxnp, label,img_path = data_lei.next_batch(batch_size)
     #print(img_np.shape)
     #print(boxnp.shape)
     #input_img = read_prepare_input(img_path)
@@ -146,8 +150,16 @@ while data_lei.epoch<=max_epoch:
     #exit(4)
     #holynet_loss = model_holyclassifier.train_on_batch([img_np,boxnp],labellist)
     #holyimg_loss = model_classifier_holyimg.train_on_batch([img_np,boxnp],label)
-    holyimg_loss = model_res50ori.train_on_batch(img_np, label)
-    print(holyimg_loss)
+    predict = model_res50ori.predict_on_batch(img_np)
+    for qq_idx in range(batch_size):
+        pre_idx = np.argmax(predict[qq_idx])
+        lab_idx = np.argmax(label[qq_idx])
+        # one_sample = {'pre':net_predict,'label':labellist}
+        if pre_idx == lab_idx:
+            tru_s += 1
+        else:
+            fal_s += 1
+    #print(holyimg_loss)
     #predict = model_classifier_holyimg.predict([img_np,boxnp])
     #predict =np.mean(predict,axis=1)
     #print(predict[0])
@@ -165,11 +177,11 @@ while data_lei.epoch<=max_epoch:
     print('step is {} batch_index is {} and epoch is {}'.format(step,data_lei.batch_index,data_lei.epoch))
 
     if data_lei.epoch!= now_epoch:
-        model_res50ori.save_weights(cfg.holy_img_weight_path+'model_holyimg_ori50res'+str(data_lei.epoch)+'.hdf5')
+        #model_res50ori.save_weights(cfg.holy_img_weight_path+'model_holyimg_ori50res'+str(data_lei.epoch)+'.hdf5')
         now_epoch = data_lei.epoch
-    if data_lei.epoch == 10:
+        arc = float(tru_s) / float(tru_s + fal_s)
+        print(arc)
         break
-    #print(holynet_loss)
 
 
 

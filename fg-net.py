@@ -106,9 +106,10 @@ class_holyimg_out = nn.fine_layer_hole(shared_layers, part_roi_input,num_rois=1,
 model_holyclassifier = Model([img_input,part_roi_input],holyclass_out)
 #model_classifier_holyimg = Model([img_input,part_roi_input],class_holyimg_out)
 
-start_epoch = 0
+start_epoch = 1
 
-cfg.base_net_weights = cfg.ori_res50_withtop#'/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(start_epoch)
+cfg.base_net_weights = cfg.holy_img_weight_path+'part_headonly'+str(start_epoch)+'.hdf5'
+    #cfg.ori_res50_withtop#'/media/e813/D/weights/kerash5/frcnn/TST_holy_img/model_part{}.hdf5'.format(start_epoch)
 try:
     print('loading weights from {}'.format(cfg.base_net_weights))
     #model_rpn.load_weights(cfg.base_net_weights, by_name=True)
@@ -120,7 +121,7 @@ except:
     print('Could not load pretrained model weights. Weights can be found in the keras application folder \
 		https://github.com/fchollet/keras/tree/master/keras/applications')
     raise ValueError('load wrong')
-optimizer = Adam(lr=1e-5)
+optimizer = Adam(lr=1e-3)
 lossfn_list =[]
 for i in range(7):
     lossfn_list.append(losses.holy_loss())
@@ -165,8 +166,8 @@ while 1:
     print(holynet_loss)
     #print(holynet_loss)
     if data_lei.epoch!= now_epoch:
-        if data_lei.epoch%2 ==0:
-            model_holyclassifier.save_weights(cfg.holy_img_weight_path+'part_headonly'+str(data_lei.epoch)+'.hdf5')
+        if data_lei.epoch%1 ==0:
+            model_holyclassifier.save_weights(cfg.holy_img_weight_path+'part_headonly_learningrate-3'+str(data_lei.epoch)+'.hdf5')
         now_epoch = data_lei.epoch
     if data_lei.epoch == max_epoch:
         print('train done! 呵呵')

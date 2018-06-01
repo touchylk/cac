@@ -119,8 +119,8 @@ class get_voc_label(object):
             for bbox in img['bboxes']:
                 nnn+=1
                 part_index = self.class_mapping[bbox['class']]
-                if part_index != 0:
-                    continue
+                '''if part_index != 0:
+                    continue'''
                 if str(part_index) not in check_dict:
                     check_dict[str(part_index)] = part_index
                 else:

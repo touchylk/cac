@@ -185,7 +185,7 @@ def nn_base(input_tensor=None, trainable=False):
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='b', trainable = trainable)
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='c', trainable = trainable)
 
-    '''x = conv_block(x, 3, [128, 128, 512], stage=3, block='a', trainable = trainable)
+    x = conv_block(x, 3, [128, 128, 512], stage=3, block='a', trainable = trainable)
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='b', trainable = trainable)
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='c', trainable = trainable)
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='d', trainable = trainable)
@@ -195,7 +195,7 @@ def nn_base(input_tensor=None, trainable=False):
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c', trainable = trainable)
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d', trainable = trainable)
     x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e', trainable = trainable)
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f', trainable = trainable)'''
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f', trainable = trainable)
     # 看一下网络输出的形状.网络输出的形状是(1, 38, 56, 1024)
     return x
 
@@ -292,7 +292,7 @@ def fg_location(base_layers,num_anchors):
 
  #[img_input, head_roi, legs_roi, wings_roi, back_roi, belly_roi, breast_roi, tail_roi]
 
-def res50ori(input_tensor=None,nb_classes=200, trainable=False):
+def res50ori(input_tensor=None,nb_classes=200, trainable=True):
 
     # Determine proper input shape
     if K.image_dim_ordering() == 'th':

@@ -30,8 +30,8 @@ class get_voc_label(object):
         self.bird_class_num = len(bird_classes_count)
         self.net_size = [38,56]
         self.C =config
-        self.input_img_size_witdth = 600
-        self.input_img_size_heigth = 600
+        self.input_img_size_witdth = 500
+        self.input_img_size_heigth = 500
         if self.C.network=='resnet50':
             self.get_outputsize =self.get_img_output_length_res50
         elif self.C.network=='vgg':
